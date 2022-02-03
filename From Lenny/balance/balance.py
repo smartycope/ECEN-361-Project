@@ -48,7 +48,7 @@ K = 0.98
 
 FIX = -12.89
 
-print "starting"
+print("starting")
 
 def dist(a, b):
     return math.sqrt((a * a) + (b * b))
@@ -66,7 +66,7 @@ def get_x_rotation(x,y,z):
 
 for i in range(0, int(300.0 / time_diff)):
     time.sleep(time_diff - 0.005)
-    
+
     sensor.read_raw_data()
     # Gyroscope value Degree Per Second / Scalled Data
     rate_gyroX = sensor.read_scaled_gyro_x()
@@ -77,34 +77,33 @@ for i in range(0, int(300.0 / time_diff)):
     gyroAngleX += rate_gyroX * time_diff
     gyroAngleY += rate_gyroY * time_diff
     gyroAngleZ += rate_gyroZ * time_diff
-    
+
     # Accelerometer Raw Value
     raw_accX = sensor.read_raw_accel_x()
     raw_accY = sensor.read_raw_accel_y()
     raw_accZ = sensor.read_raw_accel_z()
-    
+
     # Accelerometer value Degree Per Second / Scalled Data
     rate_accX = sensor.read_scaled_accel_x()
     rate_accY = sensor.read_scaled_accel_y()
     rate_accZ = sensor.read_scaled_accel_z()
-    
+
     # http://ozzmaker.com/2013/04/18/success-with-a-balancing-robot-using-a-raspberry-pi/
     accAngX = ( math.atan2(rate_accX, rate_accY) + M_PI ) * RAD_TO_DEG
     CFangleX = K * ( CFangleX + rate_gyroX * time_diff) + (1 - K) * accAngX
-    
+
     # http://blog.bitify.co.uk/2013/11/reading-data-from-mpu-6050-on-raspberry.html
     accAngX1 = get_x_rotation(rate_accX, rate_accY, rate_accX)
     CFangleX1 = ( K * ( CFangleX1 + rate_gyroX * time_diff) + (1 - K) * accAngX1 )
-    print accAngX
-    print accAngX1
+    print(accAngX)
+    print(accAngX1)
     # Followed the Second example because it gives resonable pid reading
 '''    pid = int(p.update(CFangleX1))
     speed = pid * 30
-    
+
     if(pid > 0):
         MOTOR.forward(speed)
     elif(pid < 0):
         MOTOR.backward( abs(speed) )
     else:
         MOTOR.stop()'''
-

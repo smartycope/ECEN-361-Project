@@ -5,24 +5,25 @@ import time
 from MPU6050 import MPU6050
 from PID import PID
 from motor import *
+
 gyro_scale = 131.0
 accel_scale = 16384.0
 RAD_TO_DEG = 57.29578
 M_PI = 3.14159265358979323846
-address = 0x68  
-bus = smbus.SMBus(1) 
+address = 0x68
+bus = smbus.SMBus(1)
 now = time.time()
 K = 0.98
 K1 = 1 - K
 time_diff = 0.01
 sensor = MPU6050(bus, address, "MPU6050")
-sensor.read_raw_data()	
+sensor.read_raw_data()
 rate_gyroX = 0.0
 rate_gyroY = 0.0
 rate_gyroZ = 0.0
-gyroAngleX = 0.0 
-gyroAngleY = 0.0 
-gyroAngleZ = 0.0 
+gyroAngleX = 0.0
+gyroAngleY = 0.0
+gyroAngleZ = 0.0
 raw_accX = 0.0
 raw_accY = 0.0
 raw_accZ = 0.0
@@ -48,14 +49,14 @@ p=PID(1.0,-0.04,0.0)
 p.setPoint(0.0)
 
 for i in range(0, int(300.0 / time_diff)):
-    time.sleep(time_diff - 0.005) 
+    time.sleep(time_diff - 0.005)
     sensor.read_raw_data()
     rate_gyroX = sensor.read_scaled_gyro_x()
     rate_gyroY = sensor.read_scaled_gyro_y()
     rate_gyroZ = sensor.read_scaled_gyro_z()
-    gyroAngleX += rate_gyroX * time_diff 
-    gyroAngleY += rate_gyroY * time_diff 
-    gyroAngleZ += rate_gyroZ * time_diff 
+    gyroAngleX += rate_gyroX * time_diff
+    gyroAngleY += rate_gyroY * time_diff
+    gyroAngleZ += rate_gyroZ * time_diff
     raw_accX = sensor.read_raw_accel_x()
     raw_accY = sensor.read_raw_accel_y()
     raw_accZ = sensor.read_raw_accel_z()
@@ -67,13 +68,12 @@ for i in range(0, int(300.0 / time_diff)):
 
     pid = (p.update(CFangleX1))
     speed = pid/10.0
-    print CFangleX1
-    print speed
+    print(CFangleX1)
+    print(speed)
 
     if(pid > 0):
         motor_forward(speed)
     elif(pid < 0):
         motor_reverse( abs(speed) )
     else:
-	motor_stop()
-
+        motor_stop()

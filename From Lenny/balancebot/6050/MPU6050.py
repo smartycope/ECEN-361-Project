@@ -61,16 +61,17 @@ class MPU6050(object):
         self.accel_raw_x = 0
         self.accel_raw_y = 0
         self.accel_raw_z = 0
-        
+
         self.accel_scaled_x = 0
         self.accel_scaled_y = 0
         self.accel_scaled_z = 0
-        
+
         self.pitch = 0.0
         self.roll = 0.0
         I2CUtils.i2c_write_byte(self.bus, self.address, MPU6050.PWR_MGMT_1, 0)
         I2CUtils.i2c_write_byte(self.bus, self.address, MPU6050.FS_SEL, self.fs_scale << 3)
         I2CUtils.i2c_write_byte(self.bus, self.address, MPU6050.AFS_SEL, self.afs_scale << 3)
+
     def read_raw_data(self):
         '''
         Read the raw data from the sensor, scale it appropriately and store for later use
@@ -94,35 +95,35 @@ class MPU6050(object):
         self.accel_scaled_z = self.accel_raw_z / MPU6050.ACCEL_SCALE[self.afs_scale][1]
         self.pitch = self.read_x_rotation(self.read_scaled_accel_x(),self.read_scaled_accel_y(),self.read_scaled_accel_z())
         self.roll =  self.read_y_rotation(self.read_scaled_accel_x(),self.read_scaled_accel_y(),self.read_scaled_accel_z())
-        
+
     def distance(self, x, y):
         '''Returns the distance between two point in 2d space'''
         return math.sqrt((x * x) + (y * y))
-    
+
     def read_x_rotation(self, x, y, z):
         '''Returns the rotation around the X axis in radians'''
         return math.atan2(y, self.distance(x, z))
-    
+
     def read_y_rotation(self, x, y, z):
         '''Returns the rotation around the Y axis in radians'''
         return -math.atan2(x, self.distance(y, z))
-    
+
     def read_raw_accel_x(self):
         '''Return the RAW X accelerometer value'''
         return self.accel_raw_x
-        
+
     def read_raw_accel_y(self):
         '''Return the RAW Y accelerometer value'''
         return self.accel_raw_y
-        
+
     def read_raw_accel_z(self):
-        '''Return the RAW Z accelerometer value'''        
+        '''Return the RAW Z accelerometer value'''
         return self.accel_raw_z
-    
+
     def read_scaled_accel_x(self):
         '''Return the SCALED X accelerometer value'''
         return self.accel_scaled_x
-    
+
     def read_scaled_accel_y(self):
         '''Return the SCALED Y accelerometer value'''
         return self.accel_scaled_y
@@ -134,15 +135,15 @@ class MPU6050(object):
     def read_raw_gyro_x(self):
         '''Return the RAW X gyro value'''
         return self.gyro_raw_x
-        
+
     def read_raw_gyro_y(self):
         '''Return the RAW Y gyro value'''
         return self.gyro_raw_y
-        
+
     def read_raw_gyro_z(self):
         '''Return the RAW Z gyro value'''
         return self.gyro_raw_z
-    
+
     def read_scaled_gyro_x(self):
         '''Return the SCALED X gyro value in radians/second'''
         return self.gyro_scaled_x
@@ -158,7 +159,7 @@ class MPU6050(object):
     def read_temp(self):
         '''Return the temperature'''
         return self.scaled_temp
-    
+
     def read_pitch(self):
         '''Return the current pitch value in radians'''
         return self.pitch
@@ -166,7 +167,7 @@ class MPU6050(object):
     def read_roll(self):
         '''Return the current roll value in radians'''
         return self.roll
-        
+
     def read_all(self):
         '''Return pitch and roll in radians and the scaled x, y & z values from the gyroscope and accelerometer'''
         self.read_raw_data()
