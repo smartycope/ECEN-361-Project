@@ -47,8 +47,8 @@ def get_x_rotation(x,y,z):
 
 p=PID(1.0,-0.04,0.0)
 p.setPoint(0.0)
-
-for i in range(0, int(300.0 / time_diff)):
+timeRate = 500 # was 300.0
+for i in range(0, int(timeRate / time_diff)):
     time.sleep(time_diff - 0.005)
     sensor.read_raw_data()
     rate_gyroX = sensor.read_scaled_gyro_x()
@@ -68,8 +68,9 @@ for i in range(0, int(300.0 / time_diff)):
 
     pid = (p.update(CFangleX1))
     speed = pid/10.0
-    print(CFangleX1)
-    print(speed)
+    #print(CFangleX1)
+    #print(speed)
+    print(f'speed={speed:9.5f}   accAngX1={accAngX1:9.5f}   CFangleX1={CFangleX1:9.5f}   pid={pid:9.5f}    gyroAngleX={gyroAngleX:9.5f}   gyroAngleY={gyroAngleY:9.5f}   gyroAngleZ={gyroAngleZ:9.5f}')
 
     if(pid > 0):
         motor_forward(speed)
