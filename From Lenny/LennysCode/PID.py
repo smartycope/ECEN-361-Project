@@ -13,7 +13,7 @@ class PID:
         self.set_point=0.0
         self.error=0.0
 
-    def update(self,current_value):
+    def update(self, current_value): # Current value passed in is CFangleX (or CFangleX1)
         """
         Calculate PID output value for given reference input and feedback
         """

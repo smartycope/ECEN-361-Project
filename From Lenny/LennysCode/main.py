@@ -2,11 +2,18 @@ import smbus
 import math
 import time
 from MPU6050 import MPU6050
-#from PID import PID
-#import motor as MOTOR
+from PID import PID
+# import motor as MOTOR
+from motor import *
 
+print(i2c_raspberry_pi_bus_number())
+
+pidMultiplier = 30
+
+# These aren't used?
 gyro_scale = 131.0
 accel_scale = 16384.0
+
 RAD_TO_DEG = 57.29578
 M_PI = 3.14159265358979323846
 
@@ -15,13 +22,16 @@ bus = smbus.SMBus(1)  # or bus = smbus.SMBus(1) for Revision 2 boards
 
 now = time.time()
 
-K = 0.98
-K1 = 1 - K
+# Not sure what these are... when you figure out change the name to make more sense please
+complimenteryFilterConst = 0.98
+
+# This is unused
+# complimenteryFilterConstInverse = 1 - complimenteryFilterConst
 
 time_diff = 0.01
 
 sensor = MPU6050(bus, address, "MPU6050")
-sensor.read_raw_data()# Reads current data from the sensor
+sensor.read_raw_data() # Reads current data from the sensor
 
 rate_gyroX = 0.0
 rate_gyroY = 0.0
@@ -41,6 +51,7 @@ rate_accZ = 0.0
 
 accAngX = 0.0
 
+# Not sure what these are... when you figure out change the name to make more sense please
 CFangleX = 0.0
 CFangleX1 = 0.0
 
@@ -59,8 +70,8 @@ def get_x_rotation(x,y,z):
     radians = math.atan2(y, dist(x,z))
     return math.degrees(radians)
 
-#p=PID(1.0,-0.04,0.0)
-#p.setPoint(0.0)
+p=PID(1.0,-0.04,0.0)
+p.setPoint(0.0)
 
 for i in range(0, int(300.0 / time_diff)):
     time.sleep(time_diff - 0.005)
@@ -86,22 +97,28 @@ for i in range(0, int(300.0 / time_diff)):
     rate_accY = sensor.read_scaled_accel_y()
     rate_accZ = sensor.read_scaled_accel_z()
 
+    # We're not using this later on... what does this do?
     # http://ozzmaker.com/2013/04/18/success-with-a-balancing-robot-using-a-raspberry-pi/
+    # In the link, K == AA -- CFangleX=AA*(CFangleX+rate_gyr_x*DT) +(1 - AA) * AccXangle;
     accAngX = ( math.atan2(rate_accX, rate_accY) + M_PI ) * RAD_TO_DEG
-    CFangleX = K * ( CFangleX + rate_gyroX * time_diff) + (1 - K) * accAngX
+    CFangleX = complimenteryFilterConst * ( CFangleX + rate_gyroX * time_diff) + (1 - complimenteryFilterConst) * accAngX
+
 
     # http://blog.bitify.co.uk/2013/11/reading-data-from-mpu-6050-on-raspberry.html
     accAngX1 = get_x_rotation(rate_accX, rate_accY, rate_accX)
-    CFangleX1 = ( K * ( CFangleX1 + rate_gyroX * time_diff) + (1 - K) * accAngX1 )
-    print(accAngX)
-    print(accAngX1)
+    CFangleX1 = ( complimenteryFilterConst * ( CFangleX1 + rate_gyroX * time_diff) + (1 - complimenteryFilterConst) * accAngX1 )
+
+    # print(accAngX)
+    # print(accAngX1)
+
     # Followed the Second example because it gives resonable pid reading
-'''    pid = int(p.update(CFangleX1))
-    speed = pid * 30
+    # Try using both CFangleX and CFangleX1?
+    pid = int(p.update(CFangleX1))
+    speed = pid * pidMultiplier
 
     if(pid > 0):
         MOTOR.forward(speed)
     elif(pid < 0):
-        MOTOR.backward( abs(speed) )
+        MOTOR.backward(abs(speed))
     else:
-        MOTOR.stop()'''
+        MOTOR.stop()
