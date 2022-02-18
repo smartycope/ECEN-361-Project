@@ -20,6 +20,12 @@ def motor_reverse(speed):
     if speed < 0:
         speed = 0
     rr.set_motors(speed, 1, speed, 1)
+    
+def motor_left(speed):
+    pass
+
+def motor_right(speed):
+    pass
 
 def motor_stop():
     rr.set_motors(0, 0, 0, 0)
