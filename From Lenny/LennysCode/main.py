@@ -25,9 +25,6 @@ now = time.time()
 # Not sure what these are... when you figure out change the name to make more sense please
 complimenteryFilterConst = 0.98
 
-# This is unused
-# complimenteryFilterConstInverse = 1 - complimenteryFilterConst
-
 time_diff = 0.01
 
 sensor = MPU6050(bus, address, "MPU6050")
@@ -51,7 +48,7 @@ rate_accZ = 0.0
 
 accAngX = 0.0
 
-# Not sure what these are... when you figure out change the name to make more sense please
+# Final Angle(s)
 CFangleX = 0.0
 CFangleX1 = 0.0
 
@@ -73,6 +70,7 @@ def get_x_rotation(x,y,z):
 p=PID(1.0,-0.04,0.0)
 p.setPoint(0.0)
 
+# This for loop doesn't seem like it would run the code indefinetly. Shouldn't there be a While True loop here? Give it a try
 for i in range(0, int(300.0 / time_diff)):
     time.sleep(time_diff - 0.005)
 
@@ -99,7 +97,7 @@ for i in range(0, int(300.0 / time_diff)):
 
     # We're not using this later on... what does this do?
     # http://ozzmaker.com/2013/04/18/success-with-a-balancing-robot-using-a-raspberry-pi/
-    # In the link, K == AA -- CFangleX=AA*(CFangleX+rate_gyr_x*DT) +(1 - AA) * AccXangle;
+    # In the link, K == AA, CFangleX=AA*(CFangleX+rate_gyr_x*DT) +(1 - AA) * AccXangle;
     accAngX = ( math.atan2(rate_accX, rate_accY) + M_PI ) * RAD_TO_DEG
     CFangleX = complimenteryFilterConst * ( CFangleX + rate_gyroX * time_diff) + (1 - complimenteryFilterConst) * accAngX
 
