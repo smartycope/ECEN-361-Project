@@ -1,12 +1,12 @@
 import smbus
-import math
+from math import degrees, atan2
 import time
 from MPU6050 import MPU6050
 from PID import PID
-# import motor as MOTOR
-from motor import *
+import motor
+from Util import dist
 
-print(i2c_raspberry_pi_bus_number())
+# print(i2c_raspberry_pi_bus_number())
 
 pidMultiplier = 30
 
@@ -56,16 +56,12 @@ FIX = -12.89
 
 print("starting")
 
-def dist(a, b):
-    return math.sqrt((a * a) + (b * b))
 
 def get_y_rotation(x,y,z):
-    radians = math.atan2(x, dist(y,z))
-    return -math.degrees(radians)
+    return -atan2(x, dist(y,z))
 
 def get_x_rotation(x,y,z):
-    radians = math.atan2(y, dist(x,z))
-    return math.degrees(radians)
+    return atan2(y, dist(x,z))
 
 p=PID(1.0,-0.04,0.0)
 p.setPoint(0.0)
@@ -98,12 +94,12 @@ for i in range(0, int(300.0 / time_diff)):
     # We're not using this later on... what does this do?
     # http://ozzmaker.com/2013/04/18/success-with-a-balancing-robot-using-a-raspberry-pi/
     # In the link, K == AA, CFangleX=AA*(CFangleX+rate_gyr_x*DT) +(1 - AA) * AccXangle;
-    accAngX = ( math.atan2(rate_accX, rate_accY) + M_PI ) * RAD_TO_DEG
+    accAngX = ( atan2(rate_accX, rate_accY) + M_PI ) * RAD_TO_DEG
     CFangleX = complimenteryFilterConst * ( CFangleX + rate_gyroX * time_diff) + (1 - complimenteryFilterConst) * accAngX
 
 
     # http://blog.bitify.co.uk/2013/11/reading-data-from-mpu-6050-on-raspberry.html
-    accAngX1 = get_x_rotation(rate_accX, rate_accY, rate_accX)
+    accAngX1 = degrees(get_x_rotation(rate_accX, rate_accY, rate_accX))
     CFangleX1 = ( complimenteryFilterConst * ( CFangleX1 + rate_gyroX * time_diff) + (1 - complimenteryFilterConst) * accAngX1 )
 
     # print(accAngX)
@@ -115,8 +111,8 @@ for i in range(0, int(300.0 / time_diff)):
     speed = pid * pidMultiplier
 
     if(pid > 0):
-        MOTOR.forward(speed)
+        motor.forward(speed)
     elif(pid < 0):
-        MOTOR.backward(abs(speed))
+        motor.backward(abs(speed))
     else:
-        MOTOR.stop()
+        motor.stop()

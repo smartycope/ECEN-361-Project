@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from math import sqrt
 
 def i2c_raspberry_pi_bus_number():
     """Returns Raspberry Pi I2C bus number (integer, 0 or 1).
@@ -40,3 +41,6 @@ def twos_compliment(high_byte, low_byte):
         return -((0xffff - value) + 1)
     else:
         return value
+
+def dist(a, b):
+    return sqrt((a * a) + (b * b))

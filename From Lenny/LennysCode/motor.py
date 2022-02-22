@@ -5,27 +5,28 @@
 from rrb3 import *
 import time
 
-rr = RRB3(11, 11)
+raw = RRB3(11, 11)
 
-def motor_forward(speed):
+def constrain(speed):
     if speed > 1:
         speed = 1
     if speed < 0:
         speed = 0
-    rr.set_motors(speed, 0, speed, 0)
+    return speed
 
-def motor_reverse(speed):
-    if speed > 1:
-        speed = 1
-    if speed < 0:
-        speed = 0
-    rr.set_motors(speed, 1, speed, 1)
-    
-def motor_left(speed):
-    pass
+# These may be swapped, I haven't tested it
+def forward(speed):
+    raw.set_motors(constrain(speed), 0, constrain(speed), 0)
 
-def motor_right(speed):
-    pass
+def reverse(speed):
+    raw.set_motors(constrain(speed), 1, constrain(speed), 1)
 
-def motor_stop():
-    rr.set_motors(0, 0, 0, 0)
+# These may be swapped, I haven't tested it
+def left(speed):
+    raw.set_motors(constrain(speed), 1, constrain(speed), 0)
+
+def right(speed):
+    raw.set_motors(constrain(speed), 0, constrain(speed), 1)
+
+def stop():
+    raw.set_motors(0, 0, 0, 0)
