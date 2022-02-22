@@ -8,7 +8,7 @@ import motor
 from time import time as now
 from Util import dist
 
-# IP=192.168.43.207; sshpass -p "raspberry" scp -r /home/leonard/hello/class/ECEN-361-Project/From\ Lenny/LennysCode/ "pi@$IP:/home/pi/ECEN-361-Project/ECEN-361-Project/From\ Lenny/" && sshpass -p "raspberry" ssh pi@$IP
+# IP=192.168.43.207; sshpass -p "raspberry" scp -r /home/** USER **/hello/class/ECEN-361-Project/From\ Lenny/LennysCode/ "pi@$IP:/home/pi/ECEN-361-Project/ECEN-361-Project/From\ Lenny/" && sshpass -p "raspberry" ssh pi@$IP
 
 pidMultiplier = 30
 
