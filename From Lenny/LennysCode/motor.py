@@ -14,6 +14,19 @@ def constrain(speed):
         speed = 0
     return speed
 
+def directionTest(key):
+    switch:
+        case 0:
+            print('Up!!!')
+        case 1:
+            print('Down!!!')
+        case 2:
+            print('Left!!!')
+        case 3:
+            print('Right!!!')
+        default:
+            
+
 # These may be swapped, I haven't tested it
 def forward(speed):
     raw.set_motors(constrain(speed), 0, constrain(speed), 0)
