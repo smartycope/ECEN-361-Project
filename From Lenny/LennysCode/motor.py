@@ -18,13 +18,18 @@ def directionTest(key):
     switch:
         case 0:
             print('Up!!!')
+            break
         case 1:
             print('Down!!!')
+            break
         case 2:
             print('Left!!!')
+            break
         case 3:
             print('Right!!!')
+            break
         default:
+            break
             
 
 # These may be swapped, I haven't tested it
