@@ -67,52 +67,57 @@ p=PID(1.0,-0.04,0.0)
 p.setPoint(0.0)
 
 # This for loop doesn't seem like it would run the code indefinetly. Shouldn't there be a While True loop here? Give it a try
-for i in range(0, int(300.0 / time_diff)):
-    time.sleep(time_diff - 0.005)
+def balance():
+    for i in range(0, int(300.0 / time_diff)):
+        time.sleep(time_diff - 0.005)
 
-    sensor.read_raw_data()
-    # Gyroscope value Degree Per Second / Scalled Data
-    rate_gyroX = sensor.read_scaled_gyro_x()
-    rate_gyroY = sensor.read_scaled_gyro_y()
-    rate_gyroZ = sensor.read_scaled_gyro_z()
+        sensor.read_raw_data()
+        # Gyroscope value Degree Per Second / Scalled Data
+        rate_gyroX = sensor.read_scaled_gyro_x()
+        rate_gyroY = sensor.read_scaled_gyro_y()
+        rate_gyroZ = sensor.read_scaled_gyro_z()
 
-    # The angle of the Gyroscope
-    gyroAngleX += rate_gyroX * time_diff
-    gyroAngleY += rate_gyroY * time_diff
-    gyroAngleZ += rate_gyroZ * time_diff
+        # The angle of the Gyroscope
+        gyroAngleX += rate_gyroX * time_diff
+        gyroAngleY += rate_gyroY * time_diff
+        gyroAngleZ += rate_gyroZ * time_diff
 
-    # Accelerometer Raw Value
-    raw_accX = sensor.read_raw_accel_x()
-    raw_accY = sensor.read_raw_accel_y()
-    raw_accZ = sensor.read_raw_accel_z()
+        # Accelerometer Raw Value
+        raw_accX = sensor.read_raw_accel_x()
+        raw_accY = sensor.read_raw_accel_y()
+        raw_accZ = sensor.read_raw_accel_z()
 
-    # Accelerometer value Degree Per Second / Scalled Data
-    rate_accX = sensor.read_scaled_accel_x()
-    rate_accY = sensor.read_scaled_accel_y()
-    rate_accZ = sensor.read_scaled_accel_z()
+        # Accelerometer value Degree Per Second / Scalled Data
+        rate_accX = sensor.read_scaled_accel_x()
+        rate_accY = sensor.read_scaled_accel_y()
+        rate_accZ = sensor.read_scaled_accel_z()
 
-    # We're not using this later on... what does this do?
-    # http://ozzmaker.com/2013/04/18/success-with-a-balancing-robot-using-a-raspberry-pi/
-    # In the link, K == AA, CFangleX=AA*(CFangleX+rate_gyr_x*DT) +(1 - AA) * AccXangle;
-    accAngX = ( atan2(rate_accX, rate_accY) + M_PI ) * RAD_TO_DEG
-    CFangleX = complimenteryFilterConst * ( CFangleX + rate_gyroX * time_diff) + (1 - complimenteryFilterConst) * accAngX
+        # We're not using this later on... what does this do?
+        # http://ozzmaker.com/2013/04/18/success-with-a-balancing-robot-using-a-raspberry-pi/
+        # In the link, K == AA, CFangleX=AA*(CFangleX+rate_gyr_x*DT) +(1 - AA) * AccXangle;
+        accAngX = ( atan2(rate_accX, rate_accY) + M_PI ) * RAD_TO_DEG
+        CFangleX = complimenteryFilterConst * ( CFangleX + rate_gyroX * time_diff) + (1 - complimenteryFilterConst) * accAngX
 
 
-    # http://blog.bitify.co.uk/2013/11/reading-data-from-mpu-6050-on-raspberry.html
-    accAngX1 = degrees(get_x_rotation(rate_accX, rate_accY, rate_accX))
-    CFangleX1 = ( complimenteryFilterConst * ( CFangleX1 + rate_gyroX * time_diff) + (1 - complimenteryFilterConst) * accAngX1 )
+        # http://blog.bitify.co.uk/2013/11/reading-data-from-mpu-6050-on-raspberry.html
+        accAngX1 = degrees(get_x_rotation(rate_accX, rate_accY, rate_accX))
+        CFangleX1 = ( complimenteryFilterConst * ( CFangleX1 + rate_gyroX * time_diff) + (1 - complimenteryFilterConst) * accAngX1 )
 
-    # print(accAngX)
-    # print(accAngX1)
+        # print(accAngX)
+        # print(accAngX1)
 
-    # Followed the Second example because it gives resonable pid reading
-    # Try using both CFangleX and CFangleX1?
-    pid = int(p.update(CFangleX1))
-    speed = pid * pidMultiplier
+        # Followed the Second example because it gives resonable pid reading
+        # Try using both CFangleX and CFangleX1?
+        pid = int(p.update(CFangleX1))
+        speed = pid * pidMultiplier
 
-    if(pid > 0):
-        motor.forward(speed)
-    elif(pid < 0):
-        motor.backward(abs(speed))
-    else:
-        motor.stop()
+        if(pid > 0):
+            motor.forward(speed)
+        elif(pid < 0):
+            motor.backward(abs(speed))
+        else:
+            motor.stop()
+    
+# startup()    
+while True:
+    balance()
