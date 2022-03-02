@@ -112,10 +112,6 @@ def standUp():
     sensor.update()
     faceUp = sensor.roll > 0
 
-    # pause1=p1=.8
-    # pause2=p2=.294
-    # pause3=p3=.2
-
     forward = int(not faceUp)
     backward = int(faceUp)
     rollSide = 1 if faceUp else -1
