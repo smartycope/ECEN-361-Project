@@ -15,21 +15,17 @@ def constrain(speed):
     return speed
 
 def directionTest(key):
-    switch:
-        case 0:
-            print('Up!!!')
-            break
-        case 1:
-            print('Down!!!')
-            break
-        case 2:
-            print('Left!!!')
-            break
-        case 3:
-            print('Right!!!')
-            break
-        default:
-            break
+    if (key == 0): # UP
+        print('Up!!!')
+    
+    elif (key == 1): # DOWN
+        print('Down!!!')
+        
+    elif (key == 2): # LEFT
+        print('Left!!!')
+        
+    elif (key == 3): # RIGHT
+        print('Right!!!')
             
 
 # These may be swapped, I haven't tested it
