@@ -44,8 +44,8 @@ def get_x_rotation(x,y,z):
 # Created to end program after testing for n seconds
 def exitfunc():
     print("Exit Time", datetime.now())
-    motor.raw.set_motors(0, 0, 0, 0)
     os._exit(0)
+    # Motors run forwards after ending call, just type python startup.py to reset them?
 
 # This for loop doesn't seem like it would run the code indefinetly. Shouldn't there be a While True loop here? Give it a try
 def balance():
