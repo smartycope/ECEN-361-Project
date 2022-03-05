@@ -4,10 +4,15 @@ import time
 from MPU6050 import MPU6050
 from PID import PID
 import motor
+import standup
 from Util import dist
+import os
+from datetime import datetime
+from threading import Timer
+
 
 # print(i2c_raspberry_pi_bus_number())
-
+timerDurration = 8
 pidMultiplier = 30
 
 # These aren't used?
@@ -30,52 +35,52 @@ time_diff = 0.01
 sensor = MPU6050(bus, address, "MPU6050")
 sensor.read_raw_data() # Reads current data from the sensor
 
-rate_gyroX = 0.0
-rate_gyroY = 0.0
-rate_gyroZ = 0.0
-
-gyroAngleX = 0.0
-gyroAngleY = 0.0
-gyroAngleZ = 0.0
-
-raw_accX = 0.0
-raw_accY = 0.0
-raw_accZ = 0.0
-
-rate_accX = 0.0
-rate_accY = 0.0
-rate_accZ = 0.0
-
-accAngX = 0.0
-
-# Final Angle(s)
-CFangleX = 0.0
-CFangleX1 = 0.0
-
-FIX = -12.89
-
-print("starting")
-
-
 def get_y_rotation(x,y,z):
     return -atan2(x, dist(y,z))
 
 def get_x_rotation(x,y,z):
     return atan2(y, dist(x,z))
 
-p=PID(1.0,-0.04,0.0)
-p.setPoint(0.0)
+# Created to end program after testing for n seconds
+def exitfunc():
+    print("Exit Time", datetime.now())
+    motor.raw.set_motors(0, 0, 0, 0)
+    os._exit(0)
 
 # This for loop doesn't seem like it would run the code indefinetly. Shouldn't there be a While True loop here? Give it a try
 def balance():
+    rate_gyroX = 0.0
+    rate_gyroY = 0.0
+    rate_gyroZ = 0.0
+    
+    gyroAngleX = 0.0
+    gyroAngleY = 0.0
+    gyroAngleZ = 0.0
+    
+    raw_accX = 0.0
+    raw_accY = 0.0
+    raw_accZ = 0.0
+    
+    rate_accX = 0.0
+    rate_accY = 0.0
+    rate_accZ = 0.0
+    
+    accAngX = 0.0
+    
+    # Final Angle(s)
+    CFangleX = 0.0
+    CFangleX1 = 0.0
+    
+    FIX = -12.89
+    
     for i in range(0, int(300.0 / time_diff)):
         time.sleep(time_diff - 0.005)
 
         sensor.read_raw_data()
         # Gyroscope value Degree Per Second / Scalled Data
-        rate_gyroX = sensor.read_scaled_gyro_x()
-        rate_gyroY = sensor.read_scaled_gyro_y()
-        rate_gyroZ = sensor.read_scaled_gyro_z()
+        rate_gyroX = sensor.read_gyro_scaled_x()
+        rate_gyroY = sensor.read_gyro_scaled_y()
+        rate_gyroZ = sensor.read_gyro_scaled_z()
 
         # The angle of the Gyroscope
         gyroAngleX += rate_gyroX * time_diff
@@ -83,14 +88,14 @@ def balance():
         gyroAngleZ += rate_gyroZ * time_diff
 
         # Accelerometer Raw Value
-        raw_accX = sensor.read_raw_accel_x()
-        raw_accY = sensor.read_raw_accel_y()
-        raw_accZ = sensor.read_raw_accel_z()
+        raw_accX = sensor.read_accel_raw_x()
+        raw_accY = sensor.read_accel_raw_y()
+        raw_accZ = sensor.read_accel_raw_z()
 
         # Accelerometer value Degree Per Second / Scalled Data
-        rate_accX = sensor.read_scaled_accel_x()
-        rate_accY = sensor.read_scaled_accel_y()
-        rate_accZ = sensor.read_scaled_accel_z()
+        rate_accX = sensor.read_accel_scaled_x()
+        rate_accY = sensor.read_accel_scaled_y()
+        rate_accZ = sensor.read_accel_scaled_z()
 
         # We're not using this later on... what does this do?
         # http://ozzmaker.com/2013/04/18/success-with-a-balancing-robot-using-a-raspberry-pi/
@@ -104,7 +109,7 @@ def balance():
         CFangleX1 = ( complimenteryFilterConst * ( CFangleX1 + rate_gyroX * time_diff) + (1 - complimenteryFilterConst) * accAngX1 )
 
         # print(accAngX)
-        # print(accAngX1)
+        print(accAngX1)
 
         # Followed the Second example because it gives resonable pid reading
         # Try using both CFangleX and CFangleX1?
@@ -114,10 +119,21 @@ def balance():
         if(pid > 0):
             motor.forward(speed)
         elif(pid < 0):
-            motor.backward(abs(speed))
+            motor.reverse(abs(speed))
         else:
             motor.stop()
-    
-# startup()    
-while True:
-    balance()
+
+##################################################################################          
+####  MAIN CODE ###
+
+Timer(timerDurration, exitfunc).start() # exit in 8 seconds
+print("starting")
+
+p=PID(1.0,-0.04,0.0)
+p.setPoint(0.0)  
+
+#standup.standUp()
+balance()
+
+
+##################################################################################
