@@ -126,7 +126,7 @@ def balance():
 ##################################################################################          
 ####  MAIN CODE ###
 
-Timer(timerDurration, exitfunc).start() # exit in 8 seconds
+Timer(timerDurration, exitfunc).start() # exit in timerDurration seconds
 print("starting")
 
 p=PID(1.0,-0.04,0.0)
