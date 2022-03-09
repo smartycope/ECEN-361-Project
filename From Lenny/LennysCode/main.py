@@ -20,6 +20,7 @@ sensor = MPU6050(bus, address, "MPU6050")
 
 
 # We don't know how this works, but it's important
+# P (the first value) maybe be too high
 pid=PID(1.0, -0.04, 0.0)
 # pid=PID(4.3, 6.9, 0.35)
 # pid=PID(2, 0, 1)
