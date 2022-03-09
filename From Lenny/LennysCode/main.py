@@ -19,11 +19,14 @@ bus = smbus.SMBus(1)  # or bus = smbus.SMBus(1) for Revision 2 boards
 sensor = MPU6050(bus, address, "MPU6050")
 
 
-# We don't know how this works, but it's important
-# P (the first value) maybe be too high
-pid=PID(1.0, -0.04, 0.0)
-# pid=PID(4.3, 6.9, 0.35)
-# pid=PID(2, 0, 1)
+# This is important
+# Use this link to tune the parameters:
+# http://www.grauonline.de/alexwww/ardumower/pid/pid.html
+
+# pid=PID(2.14, .74, 1.08) # looks decent, with a just little bit of overcorrection
+pid=PID(1.88, .28, 1.19) # looks pretty good, more stochastic, but smooth output with no overcorrection
+# pid=PID(1.0, -0.04, 0.0) # What we came with
+# pid=PID(2, 0, 1) # The default we found online
 pid.setPoint(0.0)
 
 # The comp filter tracks its own time
