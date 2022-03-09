@@ -102,9 +102,9 @@ class MPU6050(object):
         I2CUtils.i2c_write_byte(self.bus, self.address, MPU6050.AFS_SEL, self.afs_scale << self._resolution)
 
         self.update = self.read_raw_data
+        self.update()
         self.calibrateGyro(self.calibrationSamples)
         # self.read_raw_data()
-
 
     def calibrateGyro(self, N):
         # Display message
@@ -129,7 +129,6 @@ class MPU6050(object):
         print("\tZ axis offset: " + str(round(self.gyroZcal,1)) + "\n")
         sleep(.5)
         # self.dtTimer = time.time()
-
 
     def read_raw_data(self):
         ''' Read the raw data from the sensor, scale it appropriately and store for later use'''
@@ -241,9 +240,3 @@ class MPU6050(object):
     def read_scaled_temp(self):
         self.read_temp_data()
         return self.scaled_temp
-
-address = 0x68  # This is the address value read via the i2cdetect command
-bus = smbus.SMBus(1)  # or bus = smbus.SMBus(1) for Revision 2 boards
-
-sensor = MPU6050(bus, address, "MPU6050")
-sensor.read_raw_data() # Reads current data from the sensor

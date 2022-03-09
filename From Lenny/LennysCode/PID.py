@@ -22,13 +22,15 @@ class PID:
         self.D_value = self.Kd * ( self.error - self.Derivator)
         self.Derivator = self.error
         self.Integrator = self.Integrator + self.error
+
         if self.Integrator > self.Integrator_max:
             self.Integrator = self.Integrator_max
         elif self.Integrator < self.Integrator_min:
             self.Integrator = self.Integrator_min
+
         self.I_value = self.Integrator * self.Ki
-        PID = self.P_value + self.I_value + self.D_value
-        return PID
+
+        return self.P_value + self.I_value + self.D_value
 
     def setPoint(self,set_point):
         """
@@ -37,32 +39,3 @@ class PID:
         self.set_point = set_point
         self.Integrator=0
         self.Derivator=0
-
-    # They're public, morons
-
-    # def setIntegrator(self, Integrator):
-    #     self.Integrator = Integrator
-
-    # def setDerivator(self, Derivator):
-    #     self.Derivator = Derivator
-
-    # def setKp(self,P):
-    #     self.Kp=P
-
-    # def setKi(self,I):
-    #     self.Ki=I
-
-    # def setKd(self,D):
-    #     self.Kd=D
-
-    # def getPoint(self):
-    #     return self.set_point
-
-    # def getError(self):
-    #     return self.error
-
-    # def getIntegrator(self):
-    #     return self.Integrator
-
-    # def getDerivator(self):
-    #     return self.Derivator

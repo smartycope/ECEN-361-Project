@@ -8,7 +8,6 @@ import motor
 from time import time as now
 from Util import dist
 
-# IP=192.168.43.207; sshpass -p "raspberry" scp -r /home/leonard/hello/class/ECEN-361-Project/From\ Lenny/LennysCode/ "pi@$IP:/home/pi/ECEN-361-Project/ECEN-361-Project/From\ Lenny/" && sshpass -p "raspberry" ssh pi@$IP
 
 pidMultiplier = 30
 
@@ -90,8 +89,8 @@ def compFilter():
     accRoll = degrees(atan2(sensor.accel_scaled_x, sensor.accel_scaled_z))
 
     # Gyro integration angle
-    gyroRoll -= sensor.gyro_scaled_y * dt
-    gyroPitch += sensor.gyro_scaled_x * dt
+    # gyroRoll -= sensor.gyro_scaled_y * dt
+    # gyroPitch += sensor.gyro_scaled_x * dt
     gyroYaw += sensor.gyro_scaled_z * dt
     yaw = gyroYaw
 
@@ -111,10 +110,6 @@ def standUp():
     # First get if we're face down or face up
     sensor.update()
     faceUp = sensor.roll > 0
-
-    # pause1=p1=.8
-    # pause2=p2=.294
-    # pause3=p3=.2
 
     forward = int(not faceUp)
     backward = int(faceUp)
